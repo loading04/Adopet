@@ -13,6 +13,8 @@ public interface UserRepository extends JpaRepository<User, UUID> {
     // Find a user by their email (useful for authentication)
     Optional<User> findByEmail(String email);
     void deleteById(UUID id);
+    List<User> findAllByDeletedAtIsNull();
+
     
     
 }
