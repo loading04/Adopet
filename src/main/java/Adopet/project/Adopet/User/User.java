@@ -1,8 +1,8 @@
-package com.example.petadoption.model;
+package Adopet.project.Adopet.User; 
 
 import jakarta.persistence.*;
 import lombok.*;
-
+import java.time.Instant;
 import java.util.UUID;
 
 @Entity
@@ -39,7 +39,7 @@ public class User {
     private String createdAt;
 
     private UUID deletedBy; // ID of the admin who deleted the user
-    private LocalDateTime deletedAt; // Timestamp when the user was deleted
+    private Instant deletedAt; // Timestamp when the user was deleted
 
     @PrePersist
     protected void onCreate() {
@@ -48,7 +48,7 @@ public class User {
 
     @PreRemove
     protected void onDelete() {
-        this.deletedAt = LocalDateTime.now();
+        this.deletedAt = Instant.now();
     }
 
     public enum Role {

@@ -1,16 +1,15 @@
-package com.example.petadoption.service;
+package Adopet.project.Adopet.User;
 
-import com.example.petadoption.model.User;
-import com.example.petadoption.repository.UserRepository;
-import com.example.petadoption.exception.UserNotFoundException;
-import com.example.petadoption.exception.DuplicateEmailException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import Adopet.project.Adopet.User.Exceptions.UserNotFoundException;
+import Adopet.project.Adopet.User.Exceptions.DuplicateEmailException;
 import lombok.extern.slf4j.Slf4j;
 
 import java.time.Instant;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @Slf4j
@@ -31,6 +30,7 @@ public class UserService {
         log.info("Fetching user with ID: {}", id);
         return userRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException("User not found with ID: " + id));
+
     }
 
     // Get a user by email
@@ -53,11 +53,11 @@ public class UserService {
     }
 
     // Soft delete a user
-    public void deleteUser(UUID id, String deletedBy) {
+    public void deleteUser(UUID id, UUID deletedBy) {
         log.info("Attempting to delete user with ID: {} by {}", id, deletedBy);
 
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new UserNotFoundException("User not found with ID: " + id));
+        .orElseThrow(() -> new UserNotFoundException("User not found with ID: " + id));
 
         user.setDeletedBy(deletedBy);
         user.setDeletedAt(Instant.now());
