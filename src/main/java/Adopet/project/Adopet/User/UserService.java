@@ -65,4 +65,16 @@ public class UserService {
 
         log.info("User with ID: {} has been soft deleted", id);
     }
+    
+    //update user
+    public User updateUser(UUID id, User updatedUser) {
+        return userRepository.findById(id).map(user -> {
+            user.setFirstName(updatedUser.getFirstName());
+            user.setLastName(updatedUser.getLastName());
+            user.setEmail(updatedUser.getEmail());
+            user.setPhone(updatedUser.getPhone());
+            user.setRole(updatedUser.getRole());
+            return userRepository.save(user);
+        }).orElseThrow(() -> new RuntimeException("User not found"));
+    }
 }
