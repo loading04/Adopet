@@ -1,9 +1,24 @@
 package Adopet.project.Adopet.User; 
 
-import jakarta.persistence.*;
-import lombok.*;
 import java.time.Instant;
 import java.util.UUID;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreRemove;
+import jakarta.persistence.Table;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.Pattern;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name = "Users")
@@ -17,18 +32,22 @@ public class User {
     private UUID id;
 
     @Column(nullable = false, length = 100)
+    @Pattern(regexp = "^[A-Za-z]+$", message = "First name must contain only letters")
     private String firstName;
 
     @Column(nullable = false, length = 100)
+    @Pattern(regexp = "^[A-Za-z]+$", message = "First name must contain only letters")
     private String lastName;
 
     @Column(nullable = false, unique = true, length = 150)
+    @Email(message = "Invalid email format")
     private String email;
 
     @Column(nullable = false)
     private String password;
 
     @Column(length = 20)
+    @Pattern(regexp = "^\\+?[0-9]{8,15}$", message = "Invalid phone number format")
     private String phone;
 
     @Enumerated(EnumType.STRING)
