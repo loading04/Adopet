@@ -2,6 +2,7 @@ package Adopet.project.Adopet.User;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import Adopet.project.Adopet.User.Exceptions.UserNotFoundException;
@@ -10,7 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.time.Instant;
 import java.util.List;
-import java.util.UUID;
+
 
 @Slf4j
 @Service
@@ -19,6 +20,9 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     // Get all active (non-deleted) users
     public List<User> getAllUsers() {
         log.info("Fetching all active users");
@@ -26,7 +30,7 @@ public class UserService {
     }
 
     // Get a single user by ID
-    public User getUserById(UUID id) {
+    public User getUserById(Long id) {
         log.info("Fetching user with ID: {}", id);
         return userRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException("User not found with ID: " + id));
@@ -40,6 +44,10 @@ public class UserService {
                 .orElseThrow(() -> new UserNotFoundException("User not found with email: " + email));
     }
 
+    private boolean isPasswordPlain(String password) {
+        // BCrypt hashes always start with $2a or $2b and are 60 chars long
+        return password == null || !password.startsWith("$2");
+    }
     // Create or update a user
     public User saveUser(User user) {
         log.info("Saving user with email: {}", user.getEmail());
@@ -48,12 +56,17 @@ public class UserService {
         if (user.getId() == null && userRepository.findByEmail(user.getEmail()).isPresent()) {
             throw new DuplicateEmailException("Email already exists: " + user.getEmail());
         }
+        // Hash password if it's new or changed
+        if (user.getId() == null || isPasswordPlain(user.getPassword())) {
+            String encodedPassword = passwordEncoder.encode(user.getPassword());
+            user.setPassword(encodedPassword);
+        }
 
         return userRepository.save(user);
     }
 
     // Soft delete a user
-    public void deleteUser(UUID id, UUID deletedBy) {
+    public void deleteUser(Long id, Long deletedBy) {
         log.info("Attempting to delete user with ID: {} by {}", id, deletedBy);
 
         User user = userRepository.findById(id)
@@ -67,7 +80,7 @@ public class UserService {
     }
     
     //update user
-    public User updateUser(UUID id, User updatedUser) {
+    public User updateUser(Long id, User updatedUser) {
         return userRepository.findById(id).map(user -> {
             user.setFirstName(updatedUser.getFirstName());
             user.setLastName(updatedUser.getLastName());

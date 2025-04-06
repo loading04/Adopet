@@ -1,7 +1,7 @@
 package Adopet.project.Adopet.User; 
 
 import java.time.Instant;
-import java.util.UUID;
+
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -28,8 +28,8 @@ import lombok.Setter;
 @AllArgsConstructor
 public class User {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private UUID id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @Column(nullable = false, length = 100)
     @Pattern(regexp = "^[A-Za-z]+$", message = "First name must contain only letters")
@@ -57,7 +57,7 @@ public class User {
     @Column(nullable = false, updatable = false)
     private String createdAt;
 
-    private UUID deletedBy; // ID of the admin who deleted the user
+    private Long deletedBy; // ID of the admin who deleted the user
     private Instant deletedAt; // Timestamp when the user was deleted
 
     @PrePersist
